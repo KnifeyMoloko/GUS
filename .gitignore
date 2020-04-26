@@ -1,0 +1,11 @@
+# Virutal environments
+/venv
+
+# Python cache
+/__pycache__
+
+# Python binaries
+*.pyc
+
+# log files
+*.log
