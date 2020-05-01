@@ -1,0 +1,6 @@
+# TODO: example scenario: package user wants to get a list of available subjects:
+# 	1. Open up a requests session using the GUS object (REST client interface)
+# 	2. Import the correct Endpoint module (e.g. Aggregates)
+#	example scenario 2: package user wants to get data by ID and Unit:
+#	from GUS.Units import units
+#	from GUS.Data import data_by_unit
