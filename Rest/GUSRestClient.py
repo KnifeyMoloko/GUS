@@ -2,14 +2,19 @@
 Rest client implementation for GUS.
 Author: Maciej Cisowski
 """
-from Rest import RestClient
+from common.helpers import get_config
+from Rest.rest_client import RestClient
 from logging import getLogger
+from logging import config as log_config
+from ruamel.yaml import YAML
+from requests import Response
 
 
 logger = getLogger(__name__)
+log_config.dictConfig(get_config())
 
 
-class PLStatClient:
+class GUSClient:
     def __init__(self,
                  ssl: bool,
                  host: str = None,
@@ -24,4 +29,7 @@ class PLStatClient:
     def client(self) -> RestClient:
         return self.__client
 
-
+    def get(self, resource_path: str,
+            headers: dict) -> Response:
+        logger.info(f"Fetching data from: \n\tpath:{resource_path}\n\theaders: {headers}")
+        return self.client.get(resource_path=resource_path, additional_headers=headers)

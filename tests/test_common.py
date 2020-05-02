@@ -29,4 +29,4 @@ def test_get_config():
     with soft_assertions():
         assert_that(config).is_not_empty()
         assert_that(config).is_type_of(CommentedMap)
-        assert_that(config['version']).is_equal_to("0.0.1")
+        assert_that(config['version']).is_equal_to(1)
