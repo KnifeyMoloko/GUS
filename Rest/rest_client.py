@@ -17,7 +17,7 @@ class RestClient(object):
                  endpoint: str = None,
                  api_key: str = None):
         """
-        Create a rest client instance for making http/s requests.
+        Create a Rest client instance for making http/s requests.
         :param ssl: should the client work in SSL mode or not
         :param api_key: optional for working with APIs needing keys
         """
