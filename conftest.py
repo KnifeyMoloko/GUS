@@ -1,5 +1,4 @@
 import pytest
-import os
 from Rest.GUSRestClient import GUSClient
 from common.helpers import get_api_key
 
