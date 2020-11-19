@@ -1,4 +1,5 @@
 # GUS
+[build_status](https://travis-ci.org/KnifeyMoloko/GUS.svg?branch=master)
 
 GUS is a REST API package for working with the GUS API BDL provided by 
 Statistics Poland (Glowny Urzad Statystyczny).
