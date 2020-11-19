@@ -2,19 +2,19 @@
 Aggregate endpoint for the GUS package.
 Author: Maciej Cisowski
 """
-from Aggregeates.metadata import metadata
-from Aggregeates.aggregates import aggregates
+from aggregeates.metadata import metadata
+from aggregeates.aggregates import aggregates
 from assertpy import assert_that, soft_assertions
 
 
-def test_aggregates(gus_rest_client):
+def test_aggregates(gus_client):
     agg = aggregates().json()
     with soft_assertions():
         assert_that(agg).is_not_none()
         assert_that(agg).is_type_of(dict)
 
 
-def test_metadata(gus_rest_client):
+def test_metadata(gus_client):
     data = metadata().json()
     expected_keys = ["id", "title", "url",
                      "provider", "dateModified", "description",

@@ -4,7 +4,7 @@ Author: Maciej Cisowski
 """
 from requests import Response
 from common.helpers import get_api_key
-from Rest import client
+from rest import client
 
 
 def metadata(language: str = None) -> Response:

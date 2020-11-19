@@ -6,7 +6,7 @@ from assertpy import assert_that, soft_assertions
 from common.helpers import get_env_vars, get_api_key, \
     get_env_type, get_config
 from ruamel.yaml.comments import CommentedMap
-from Rest.GUSRestClient import GUSClient
+from rest.gus_rest_client import GUSClient
 
 
 def test_env_vars_are_not_empty():

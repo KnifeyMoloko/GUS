@@ -4,12 +4,10 @@ import logging
 from ruamel.yaml import YAML
 
 
-
-
 def main():
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
-    logger.info(f"Working.")
+    logger.info("Working.")
 
 
 if __name__ == "__main__":
