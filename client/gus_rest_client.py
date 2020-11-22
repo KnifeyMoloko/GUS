@@ -3,7 +3,7 @@ Rest client implementation for GUS.
 Author: Maciej Cisowski
 """
 from common.helpers import get_config
-from rest.rest_client import RestClient
+from client.rest_client import RestClient
 from logging import getLogger
 from logging import config as log_config
 from requests import Response

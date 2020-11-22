@@ -1,6 +1,6 @@
 from assertpy import assert_that, soft_assertions
 from http import HTTPStatus
-from rest.gus_rest_client import GUSClient
+from client.gus_rest_client import GUSClient
 
 
 def test_rest_client_returns_ok(gus_client):

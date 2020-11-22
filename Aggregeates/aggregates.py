@@ -4,7 +4,7 @@ Author: Maciej Cisowski
 """
 from requests import Response
 from common.helpers import get_api_key
-from rest import client
+from client import client
 
 
 def aggregates(language: str = None) -> Response:
