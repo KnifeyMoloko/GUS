@@ -2,8 +2,8 @@
 Aggregate endpoint for the GUS package.
 Author: Maciej Cisowski
 """
-from aggregeates.metadata import metadata
-from aggregeates.aggregates import aggregates
+from Aggregeates.metadata import metadata
+from Aggregeates.aggregates import aggregates
 from assertpy import assert_that, soft_assertions
 
 

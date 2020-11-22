@@ -3,8 +3,8 @@ Aggregates endpoint aggregates getters.
 Author: Maciej Cisowski
 """
 from requests import Response
-from common.helpers import get_api_key
-from client import client
+from Common.helpers import get_api_key
+from Client import client
 
 
 def aggregates(language: str = None) -> Response:
