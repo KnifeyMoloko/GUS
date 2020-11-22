@@ -3,7 +3,7 @@ Test for the common package of GUS.
 Author: Maciej Cisowski (KnifeyMoloko)
 """
 from assertpy import assert_that, soft_assertions
-from Common.helpers import get_env_vars, get_api_key, \
+from common.helpers import get_env_vars, get_api_key, \
     get_env_type, get_config
 from ruamel.yaml.comments import CommentedMap
 

@@ -5,7 +5,7 @@ Author: Maciej Cisowski
 import logging
 from os import environ
 from ruamel.yaml import YAML
-from Common import GUS_CONFIG_DIR
+from common import GUS_CONFIG_DIR
 from ruamel.yaml.comments import CommentedMap
 
 
