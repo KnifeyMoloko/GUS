@@ -2,12 +2,12 @@
 # imports
 import logging
 from ruamel.yaml import YAML
+import config
+from common.swagger_parser import read_swagger
 
 
 def main():
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    logger.info("Working.")
+    read_swagger(config)
 
 
 if __name__ == "__main__":

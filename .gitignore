@@ -1,5 +1,11 @@
 # Virutal environments
 /venv
+Lib/
+Scripts/
+pyvenv.cfg
+
+# VSCode
+.vscode/
 
 # Python cache
 */.pytest_cache
