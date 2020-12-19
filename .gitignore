@@ -16,3 +16,6 @@ pyvenv.cfg
 
 # log files
 *.log
+
+# swagger file
+swagger.json

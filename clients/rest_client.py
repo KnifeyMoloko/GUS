@@ -72,4 +72,4 @@ class RestClient(object):
         url = f"{self.__url_prefix}{self.__host}{self.__endpoint}{resource_path}"
 
         logger.info(f"Attempting a GET request for: {url}")
-        return requests.get(url=url, params={}, headers=headers)
+        return requests.get(url=url, params=None, headers=headers)
