@@ -30,11 +30,14 @@ class SignatureParameterBuilder:
         self.required = self.params["required"]
         self.param_type = self.params["type"]
         self.param_in = self.params["in"]
-        self.param_format = self.params["format"] if "format" in self.params.keys(
+        self.param_format = self.params["format"] \
+            if "format" in self.params.keys(
         ) else None
-        self.param_enum = self.params["enum"] if "enum" in self.params.keys(
+        self.param_enum = self.params["enum"] \
+            if "enum" in self.params.keys(
         ) else None
-        self.param_default = self.params["default"] if "default" in self.params.keys(
+        self.param_default = self.params["default"] \
+            if "default" in self.params.keys(
         ) else None
 
     def __handle_type(self):
@@ -61,13 +64,23 @@ class SignatureParameterBuilder:
         else:
             return ""
 
+    def __build_header_param(self) -> str:
+        return f"header_{self.name}: {self.__handle_type()}"
+        f"{self.__handle_default()}"
+
+    def __build_query_param(self) -> str:
+        return f"{self.name}: {self.__handle_type()}"
+        f"{self.__handle_default()}"
+
+    def __build_path_param(self) -> str:
+        return f"path_{self.name}: {self.__handle_type()}"
+        f"{self.__handle_default()}"
+
     def build_param(self) -> Optional[str]:
-        logger.info(f"\n\n\nSignature parameter builder:\n{self}")
-        # TODO: break this off into separate dunder methods and delegate
         if self.param_in == "header":
-            return f"header_{self.name}: {self.__handle_type()}{self.__handle_default()}"
+            return self.__build_header_param()
         elif self.param_in == "query":
-            return f"{self.name}: {self.__handle_type()}{self.__handle_default()}"
+            return self.__build_query_param()
         elif self.param_in == "path":
-            return f"path_{self.name}: {self.__handle_type()}{self.__handle_default()}"
+            return self.__build_path_param()
         return

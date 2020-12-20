@@ -71,10 +71,14 @@ mock_path = {
 
 
 class TestSignatureParametersBuilder:
-    def test_ingest_path_dict(self):
+    @pytest.fixture(scope="class")
+    def mock_params(self):
         mock_key = list(mock_path.keys())[0]
-        mock_params: List[Dict[str, Any]] = mock_path[mock_key]["parameters"]
+        mock_params = mock_path[mock_key]["parameters"]
+        return mock_params
 
+    def test_ingest_path_dict(self,
+                              mock_params: List[Dict[str, Any]]):
         for param in mock_params:
             spb = SignatureParameterBuilder(params=param)
 
@@ -85,3 +89,13 @@ class TestSignatureParametersBuilder:
                     assert_that(member).is_not_none()
                     assert_that(spb.param_format).is_none()
                     assert_that(spb.name).does_not_contain("-")
+
+    def test_build(self, mock_params: List[Dict[str, Any]]):
+        for param in mock_params:
+            spb = SignatureParameterBuilder(params=param)
+            spb_string = spb.build_param()
+            logger.info(spb_string)
+
+            with soft_assertions():
+                assert_that(spb_string).is_not_empty()
+                assert_that(spb_string).is_type_of(str)

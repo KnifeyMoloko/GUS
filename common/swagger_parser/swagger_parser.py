@@ -6,7 +6,7 @@ from typing import Dict, Any, List, Optional, Set, Tuple, Union, Iterable
 from pathlib import Path
 from config import swagger_path
 from importlib.resources import read_binary, Package, Resource
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, make_dataclass
 from common.swagger_parser.singature_parameter_builder \
     import SignatureParameterBuilder
 
@@ -34,6 +34,7 @@ def read_swagger(
         params = __extract_params(
             paths[key],
             signature_parser_builder)
+        sorts = __extract_sorts_to_dataclasses(params)
         signature = __create_signature(params)
         signatures.append((key, signature))
     # TODO: replace the return type here with a NamedTuple with
@@ -77,6 +78,20 @@ def __extract_params(
         signature_parameter = signature_parser_builder(param_dict)
         output.append(signature_parameter.build_param())
     return output
+
+
+def __extract_sorts_to_dataclasses(params: List[str]) \
+        -> List:
+    sort_dataclasses = []
+
+    for param in params:
+        if "sort" in param:
+            items = param.split("Literal")[1]
+            print(param)
+            print(items)
+            sort_dataclasses.append(param)
+
+    return sort_dataclasses
 
 
 def __create_signature(params: List[str]) -> str:
