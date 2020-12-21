@@ -34,7 +34,7 @@ def read_swagger(
         params = __extract_params(
             paths[key],
             signature_parser_builder)
-        sorts = __extract_sorts_to_dataclasses(params)
+        sorts = __extract_sorts(params)
         signature = __create_signature(params)
         signatures.append((key, signature))
     # TODO: replace the return type here with a NamedTuple with
@@ -80,18 +80,25 @@ def __extract_params(
     return output
 
 
-def __extract_sorts_to_dataclasses(params: List[str]) \
-        -> List:
-    sort_dataclasses = []
+def __extract_sorts(params: List[str]) \
+        -> Tuple:
 
     for param in params:
         if "sort" in param:
-            items = param.split("Literal")[1]
-            print(param)
-            print(items)
-            sort_dataclasses.append(param)
-
-    return sort_dataclasses
+            items = param.split("Literal")[1].split(" ")
+            items_cleaned = [
+                item
+                .strip('[]')
+                .replace('"', '') for item in items]
+            items_annotated = [
+                item
+                .replace("-", "Desc")
+                .replace(",", "_")
+                .replace('"', '')
+                .rstrip("_")
+                for item in items_cleaned]
+            zipped = tuple(zip(items_annotated, items_cleaned))
+            return zipped
 
 
 def __create_signature(params: List[str]) -> str:
