@@ -2,7 +2,8 @@ import json
 import requests
 import re
 import logging
-from typing import Dict, Any, List, Optional, Set, Tuple, Union, Iterable
+from typing import Dict, Any, List, Optional, Set, Tuple, \
+    Union, Iterable, NamedTuple
 from pathlib import Path
 from config import swagger_path
 from importlib.resources import read_binary, Package, Resource
@@ -14,6 +15,12 @@ from common.swagger_parser.singature_parameter_builder \
 logger = logging.getLogger(__name__)
 
 
+class ParsedSwagger(NamedTuple):
+    path: str
+    sort: tuple
+    signature: str
+
+
 def download_swagger(path: Union[str, Path] = swagger_path) \
         -> None:
     logger.info(f"Downloading swagger file to path: {swagger_path}")
@@ -23,23 +30,25 @@ def download_swagger(path: Union[str, Path] = swagger_path) \
 
 
 def read_swagger(
-        package: Package,
-        signature_parser_builder: SignatureParameterBuilder) -> List[str]:
+    package: Package,
+    signature_parser_builder: SignatureParameterBuilder) \
+        -> List[ParsedSwagger]:
     swagger_json = __load_swagger_file(package=package)
-    # units_keys = load_swag["paths"]["/subjects"]["get"]
-    signatures = []
+    parsed_swaggers = []
 
     paths = __extract_paths_from_swagger_json(swagger_json)
     for key in paths:
         params = __extract_params(
             paths[key],
             signature_parser_builder)
-        sorts = __extract_sorts(params)
+        sort = __extract_sorts(params)
         signature = __create_signature(params)
-        signatures.append((key, signature))
-    # TODO: replace the return type here with a NamedTuple with
-    # a template_class_name, getter_func_name, path_name_etc
-    return signatures
+        parsed_swaggers.append(ParsedSwagger(
+            path=key,
+            signature=signature,
+            sort=sort))
+
+    return parsed_swaggers
 
 
 def __load_swagger_file(package: Package, resource: Resource = "swagger.json") \

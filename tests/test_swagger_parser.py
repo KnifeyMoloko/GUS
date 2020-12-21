@@ -4,7 +4,7 @@ from assertpy import assert_that, soft_assertions
 import config
 from config import config_path
 from common.swagger_parser.swagger_parser import download_swagger,\
-    read_swagger
+    read_swagger, ParsedSwagger
 from common.swagger_parser.singature_parameter_builder import \
     SignatureParameterBuilder
 
@@ -39,4 +39,15 @@ class TestSwaggerParser:
         parsed_swagger = read_swagger(
             package=config,
             signature_parser_builder=SignatureParameterBuilder)
-        assert_that(parsed_swagger).is_not_empty()
+
+        with soft_assertions():
+            for sp in parsed_swagger:
+                assert_that(sp).is_not_empty()
+                assert_that(sp).is_type_of(ParsedSwagger)
+                assert_that(sp.path).is_not_none()
+                assert_that(sp.signature).is_type_of(str)
+                assert_that(sp.signature).is_not_none()
+
+                if sp.sort:
+                    assert_that(sp.sort).is_type_of(tuple)
+                    assert_that(sp.sort).is_not_empty()
