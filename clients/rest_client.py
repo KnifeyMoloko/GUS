@@ -2,20 +2,17 @@
 Generic REST client class.
 Author: Maciej Cisowski
 """
-import requests
-import json
 from logging import getLogger
 
+import requests  # type: ignore
 
 logger = getLogger(__name__)
 
 
-class RestClient(object):
-    def __init__(self,
-                 ssl: bool,
-                 host: str = None,
-                 endpoint: str = None,
-                 api_key: str = None):
+class RestClient:
+    def __init__(
+        self, ssl: bool, host: str = None, endpoint: str = None, api_key: str = None
+    ):
         """
         Create a Rest client instance for making http/s requests.
         :param ssl: should the client work in SSL mode or not
@@ -46,7 +43,9 @@ class RestClient(object):
     def endpoint(self, value):
         self.__endpoint = value
 
-    def get(self, resource_path: str, additional_headers: dict = None) -> requests.Response:
+    def get(
+        self, resource_path: str, additional_headers: dict = None
+    ) -> requests.Response:
         """
         Sends a GET method request to the host resource specified
         by the resource path. Returns a JSON type response and throws
@@ -58,18 +57,20 @@ class RestClient(object):
         :rtype: json
         """
         # construct request headers
-        headers = {"X-ClientId": self.api_key,
-                   "Host": self.host,
-                   "Content-Type": "application/json"}
+        headers = {
+            "X-ClientId": self.api_key,
+            "Host": self.host,
+            "Content-Type": "application/json",
+        }
 
         # add additional headers if needed
         if additional_headers:
             headers.update(additional_headers)
 
-        logger.debug(f"Using headers: {headers}")
+        logger.debug("Using headers: %s", headers)
 
         # construct url string
         url = f"{self.__url_prefix}{self.__host}{self.__endpoint}{resource_path}"
 
-        logger.info(f"Attempting a GET request for: {url}")
+        logger.info("Attempting a GET request for: %s", url)
         return requests.get(url=url, params=None, headers=headers)

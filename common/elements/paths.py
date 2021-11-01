@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from logging import config as log_config
-from typing import NamedTuple
+from typing import NamedTuple, Any
 
 from common.helpers import get_config
 
@@ -16,6 +16,14 @@ class RestMethod(NamedTuple):
 
     def __str__(self):
         return self.name
+
+
+class EndpointProperties(NamedTuple):
+    parameters: list[dict[str, Any]]
+    produces: list[str]
+    responses: dict[str, dict[str, Any]]
+    summary: str
+    tags: list[str]
 
 
 class RestMethods(NamedTuple):
@@ -52,43 +60,52 @@ class ApiPath(ABC):
         ...
 
 
-class Path(ApiPath):
+class GUSPath(ApiPath):
     def __init__(self, name: str, raw_path: str):
         super().__init__(name, raw_path)
-        self.__sub_paths: list[Path] = []
-        self.__endpoints: list[Endpoint] = []
+        self.__sub_paths: list[GUSPath] = []
+        self.__endpoints: list[GUSEndpoint] = []
 
     @property
     def is_endpoint(self) -> bool:
         return False
 
     @property
-    def sub_paths(self) -> list[Path]:
+    def sub_paths(self) -> list[GUSPath]:
         return self.__sub_paths
 
     @property
-    def endpoints(self) -> list[Endpoint]:
+    def endpoints(self) -> list[GUSEndpoint]:
         return self.__endpoints
 
-    def register_subpath(self, subpath: Path) -> None:
+    def register_subpath(self, subpath: GUSPath) -> bool:
         if subpath in self.sub_paths:
             logging.debug("Duplicate subpath found. Skipping the registration.")
-            return
+            return False
 
         self.sub_paths.append(subpath)
+        return True
 
-    def register_endpoint(self, endpoint: Endpoint):
+    def register_endpoint(self, endpoint: GUSEndpoint) -> bool:
         if endpoint in self.endpoints:
             logging.debug("Duplicate endpoint found. Skipping the registration.")
-            return
+            return False
 
         self.endpoints.append(endpoint)
+        return True
 
 
-class Endpoint(ApiPath):
-    def __init__(self, name: str, raw_path: str, method: RestMethod):
+class GUSEndpoint(ApiPath):
+    def __init__(
+        self,
+        name: str,
+        raw_path: str,
+        method: RestMethod,
+        properties: EndpointProperties,
+    ):
         super().__init__(name, raw_path)
         self.__method = method
+        self.__properties = properties
 
     @property
     def method(self):
@@ -97,3 +114,23 @@ class Endpoint(ApiPath):
     @property
     def is_endpoint(self) -> bool:
         return True
+
+    @property
+    def parameters(self) -> list[dict[str, Any]]:
+        return self.__properties.parameters
+
+    @property
+    def produces(self) -> list[str]:
+        return self.__properties.produces
+
+    @property
+    def responses(self) -> dict[str, dict[str, Any]]:
+        return self.__properties.responses
+
+    @property
+    def summary(self) -> str:
+        return self.__properties.summary
+
+    @property
+    def tags(self) -> list[str]:
+        return self.__properties.tags

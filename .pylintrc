@@ -4,6 +4,9 @@ jobs=4
 [BASIC]
 good-names=i,j,GUS
 
+[FORMAT]
+max-line-length=88
+
 [pre-commit-hook]
 command=custom_pylint
 disable=C0114, C0115, C0116, E0401
