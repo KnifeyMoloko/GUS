@@ -3,7 +3,7 @@ from typing import Generator
 import pytest
 from assertpy import assert_that, soft_assertions
 
-from common.elements.paths import Path
+from common.elements.paths import Path, Endpoint, RestMethods
 
 
 class TestAPIPaths:
@@ -37,9 +37,24 @@ class TestAPIPaths:
                 assert_that(subpath.raw_path).matches(r"\/\d\/{id\}")
 
     def test_endpoint_creation(self):
-        # pylint: disable=no-self-use
-        pass
+        # pylint: disable=no-self-use, expression-not-assigned
+        name = "get-something"
+        raw_path = "get-something/{id}"
+        method = RestMethods.get
+        new_endpoint = Endpoint(name=name, raw_path=raw_path, method=method)
 
-    def test_endpoint_registration(self):
-        # pylint: disable=no-self-use
-        pass
+        with soft_assertions():
+            assert_that(new_endpoint.name).is_equal_to(name)
+            assert_that(new_endpoint.raw_path).is_equal_to(raw_path)
+            assert_that(new_endpoint.method).is_equal_to(method)
+            assert_that(new_endpoint.is_endpoint)
+
+    def test_endpoint_registration(self, root_path: Path):
+        # pylint: disable=no-self-use, expression-not-assigned
+        new_endpoint = Endpoint(
+            name="get-something", raw_path="get-something/{id}", method=RestMethods.get
+        )
+        root_path.register_endpoint(new_endpoint)
+
+        with soft_assertions():
+            assert_that(len(root_path.endpoints)).is_equal_to(1)
