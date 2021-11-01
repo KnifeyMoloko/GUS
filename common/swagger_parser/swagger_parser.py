@@ -3,7 +3,7 @@ import logging
 import re
 from importlib.resources import read_binary, Package, Resource
 from pathlib import Path
-from typing import Dict, Any, List, Set, Tuple, Union, NamedTuple
+from typing import Dict, Any, List, Set, Tuple, Union, NamedTuple, Optional
 
 import requests  # type: ignore
 
@@ -67,7 +67,7 @@ def __extract_paths_from_swagger_json(swagger_json: Dict[str, Any]) -> Dict[str,
 
 def __extract_params(
     get_dict: Dict[str, Any], signature_parser_builder: SignatureParameterBuilder
-) -> list[str | None]:
+) -> list[Optional[str]]:
     # pylint: disable=unused-variable
     params = get_dict["parameters"]
     output = []
