@@ -4,10 +4,10 @@ import pytest
 from assertpy import assert_that, soft_assertions
 
 import config
+from common.elements.paths import GUSPath
 from common.swagger_parser.swagger_parser import (
     download_swagger,
     read_swagger,
-    ParsedSwagger,
 )
 from config import config_path
 
@@ -36,24 +36,30 @@ class TestSwaggerParser:
         download_swagger(path=self.test_swagger_dl_path)
         assert_that(self.test_swagger_dl_path.is_file())
 
-    def test_read_swagger(self, download_test_swagger):
-        # pylint: disable=unused-argument, no-self-use
-        parsed_swagger = read_swagger(package=config)
-
-        logger.info("Parsed swagger is: %s", parsed_swagger)
-
-        with soft_assertions():
-            for signature_parser in parsed_swagger:
-                assert_that(signature_parser).is_not_empty()
-                assert_that(signature_parser).is_type_of(ParsedSwagger)
-                assert_that(signature_parser.path).is_not_none()
-                assert_that(signature_parser.signature).is_type_of(str)
-                assert_that(signature_parser.signature).is_not_none()
-
-                if signature_parser.sort:
-                    assert_that(signature_parser.sort).is_type_of(tuple)
-                    assert_that(signature_parser.sort).is_not_empty()
-
     def test_read_swagger_paths(self):
         # pylint: disable=no-self-use
-        read_swagger(package=config)
+        root_path = read_swagger(package=config)
+
+        with soft_assertions():
+            sub_paths = root_path.sub_paths
+            endpoints = root_path.endpoints
+            assert_that(root_path).is_instance_of(GUSPath)
+            assert_that(sub_paths).is_not_empty()
+            assert_that(endpoints).is_empty()
+
+            for sub_path in sub_paths:
+                assert_that(sub_path).is_instance_of(GUSPath)
+
+            units = [path for path in root_path.sub_paths if path.name == "units"][0]
+            localities = [
+                path for path in units.sub_paths if path.name == "units-localities"
+            ][0]
+            by_id = [
+                path
+                for path in localities.sub_paths
+                if path.name == "units-localities-{id}"
+            ][0]
+            print(by_id.endpoints)
+            by_id_endpoints = by_id.endpoints
+            assert_that(len(by_id_endpoints)).is_equal_to(1)
+            # assert_that(by_id_endpoints[0]).is_instance_of(GUSEndpoint)

@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Set, Tuple, Union, NamedTuple, Optional
 
 import requests  # type: ignore
 
+from common.elements.paths import GUSPath, GUSEndpoint, RestMethods, EndpointProperties
 from common.swagger_parser.singature_parameter_builder import SignatureParameterBuilder
 from config import swagger_path
 
@@ -26,14 +27,103 @@ def download_swagger(path: Union[str, Path] = swagger_path) -> None:
         out_file.write(requests.get(swagger_uri).text)
 
 
-def read_swagger(package: Package) -> List[ParsedSwagger]:
+def read_swagger(package: Package) -> GUSPath:
     # pylint: disable=unused-variable
     swagger_json = __load_swagger_file(package=package)
-    parsed_swaggers: list[Any] = []
 
-    paths = __extract_paths_from_swagger_json(swagger_json)
+    # create root GUSPath
+    root = GUSPath(name="root", raw_path="/api/v1/")
 
-    return parsed_swaggers
+    # register top-level paths as sub-paths to root
+    __walk_path_tree(swagger_json, root)
+
+    return root
+
+
+def __walk_path_tree(swagger_json: dict[str, Any], root: GUSPath) -> GUSPath:
+    paths = swagger_json["paths"]
+
+    for path in paths:
+        parent_path = root
+        split_path = path.split("/")
+        temp_path = ""
+
+        for item in split_path:
+            if len(item) == 0:
+                continue
+
+            temp_path = (
+                f"{temp_path}/{item}" if temp_path != "/" else f"{temp_path}{item}"
+            )
+            new_path = GUSPath(
+                name=temp_path.replace("-", "_").replace("/", "-").lstrip("-"),
+                raw_path=temp_path,
+            )
+
+            if new_path.name in [path.name for path in parent_path.sub_paths]:
+                new_path = [
+                    path for path in parent_path.sub_paths if path.name == new_path.name
+                ][0]
+
+            if temp_path in paths.keys():
+                try:
+                    if "get" in paths[temp_path].keys():
+                        endpoint_properties = EndpointProperties(
+                            parameters=paths[temp_path]["get"]["parameters"],
+                            produces=paths[temp_path]["get"]["produces"],
+                            responses=paths[temp_path]["get"]["responses"],
+                            summary=paths[temp_path]["get"]["summary"],
+                            tags=paths[temp_path]["get"]["tags"],
+                        )
+                        new_path.register_endpoint(
+                            GUSEndpoint(
+                                name=new_path.name.split("-")[-1],
+                                raw_path=temp_path,
+                                method=RestMethods.get,
+                                properties=endpoint_properties,
+                            )
+                        )
+                except KeyError:
+                    pass
+
+                result = parent_path.register_subpath(new_path)
+                if not result or parent_path.name == "root":
+                    parent_path = new_path
+
+            else:
+                result = parent_path.register_subpath(new_path)
+                if result:
+                    parent_path = new_path
+                else:
+                    parent_path = [
+                        path
+                        for path in parent_path.sub_paths
+                        if path.name == new_path.name
+                    ][0]
+
+    _walk_root_tree(root)
+    # logger.info(root.sub_paths[0].sub_paths)
+    return root
+
+
+def _walk_root_tree(node: Union[GUSPath, GUSEndpoint], indent: int = 0):
+    indentation = " " * indent
+    name = (
+        f"{indentation}get:{node.name}"
+        if node.is_endpoint
+        else f"{indentation}{node.name}"
+    )
+    logger.info(name)
+
+    if not node.is_endpoint and node.endpoints:  # type: ignore
+        temp_indent = indent + 2
+        for endpoint in node.endpoints:  # type: ignore
+            _walk_root_tree(endpoint, temp_indent)
+
+    if not node.is_endpoint and node.sub_paths:  # type: ignore
+        temp_indent = indent + 2
+        for subpath in node.sub_paths:  # type: ignore
+            _walk_root_tree(subpath, temp_indent)
 
 
 def __load_swagger_file(
