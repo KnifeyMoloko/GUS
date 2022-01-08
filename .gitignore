@@ -8,6 +8,9 @@ pyvenv.cfg
 # VSCode
 .vscode/
 
+# PyCharm & Idea
+.idea
+
 # Python cache
 */.pytest_cache
 /__pycache__
@@ -26,3 +29,4 @@ swagger.json
 
 # coverage
 .coverage
+/.mypy_cache/
