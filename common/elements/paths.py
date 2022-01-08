@@ -95,7 +95,7 @@ class GUSPath(ApiPath):
         return True
 
 
-class GUSEndpoint(ApiPath):
+class GUSEndpoint(GUSPath):
     def __init__(
         self,
         name: str,
