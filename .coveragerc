@@ -1,0 +1,9 @@
+[run]
+omit = tests/*
+
+[html]
+directory = coverage_html_report
+title = coverage_report.html
+
+[json]
+output = coverage_html_report/cov.json
