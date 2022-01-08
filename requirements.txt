@@ -1,5 +1,5 @@
 assertpy==1.1
-astroid==2.9.2
+astroid==2.8.6
 atomicwrites==1.4.0
 attrs==21.4.0
 backports.entry-points-selectable==1.1.1
@@ -41,7 +41,7 @@ ruamel.yaml==0.17.20
 ruamel.yaml.clib==0.2.6
 six==1.16.0
 toml==0.10.2
-tomli==2.0.0
+tomli==1.2.3
 types-requests==2.27.3
 types-urllib3==1.26.1
 typing_extensions==4.0.1
