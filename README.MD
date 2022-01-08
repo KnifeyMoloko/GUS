@@ -1,5 +1,5 @@
 # GUS
-![CI](https://github.com/<KnifeyMoloko>/<GUS>/actions/workflows/test_with_coverage/badge.svg)
+[![CI](https://github.com/KnifeyMoloko/GUS/actions/workflows/test_with_coverage.yml/badge.svg)](https://github.com/KnifeyMoloko/GUS/actions/workflows/test_with_coverage.yml)
 
 
 GUS is a REST API package for working with the GUS API BDL provided by 
