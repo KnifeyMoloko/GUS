@@ -3,6 +3,7 @@
 Lib/
 Scripts/
 pyvenv.cfg
+.gitignore~
 
 # VSCode
 .vscode/
@@ -20,6 +21,12 @@ pyvenv.cfg
 # log files
 *.log
 
+# Pycharm and Idea
+.idea
+
 # swagger file
 swagger.json
+
+# coverage
+.coverage
 /.mypy_cache/
