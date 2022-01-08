@@ -1,4 +1,5 @@
 import logging
+from pprint import pprint
 
 import pytest
 from assertpy import assert_that, soft_assertions
@@ -15,30 +16,33 @@ logger = logging.getLogger(__name__)
 
 
 class TestSwaggerParser:
-    test_swagger_dl_path = config_path / "test_swagger_dl.json"
-    test_swagger_path = config_path / "test_swagger.json"
+    test_swagger_file = "test_swagger.json"
+    test_swagger_path = config_path / test_swagger_file
 
     @pytest.fixture(scope="class")
     def download_test_swagger(self) -> None:
         if not self.test_swagger_path.exists():
             download_swagger(path=self.test_swagger_path)
 
-    @pytest.fixture(scope="function")
-    def delete_local_test_swagger_file(self) -> None:
-        logger.info(
-            "Deleting local test swagger file at location: %s", self.test_swagger_path
-        )
-        if self.test_swagger_dl_path.exists():
-            self.test_swagger_dl_path.unlink()
+    @pytest.fixture(scope="function", autouse=True)
+    def delete_local_test_swagger_file(self):
+        yield
+        if self.test_swagger_path.exists():
+            logger.info(
+                "Deleting local test swagger file at location: %s",
+                self.test_swagger_path,
+            )
+            self.test_swagger_path.unlink()
 
     def test_download_swagger(self, delete_local_test_swagger_file):
         # pylint: disable=unused-argument, no-self-use
-        download_swagger(path=self.test_swagger_dl_path)
-        assert_that(self.test_swagger_dl_path.is_file())
+        download_swagger(path=self.test_swagger_path)
+        assert_that(self.test_swagger_path.is_file())
 
-    def test_read_swagger_paths(self):
-        # pylint: disable=no-self-use
-        root_path = read_swagger(package=config)
+    def test_read_swagger_paths(self, download_test_swagger):
+        # pylint: disable=unused-argument, no-self-use
+        root_path = read_swagger(package=config, resource=self.test_swagger_file)
+        pprint(root_path.sub_paths)
 
         with soft_assertions():
             sub_paths = root_path.sub_paths

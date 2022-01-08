@@ -20,16 +20,16 @@ class ParsedSwagger(NamedTuple):
     signature: str
 
 
-def download_swagger(path: Union[str, Path] = swagger_path) -> None:
+def download_swagger(path: Path = swagger_path) -> None:
     logger.info("Downloading swagger file to path: %s", path)
     swagger_uri = "http://bdl.stat.gov.pl/api/v1/swagger/doc/swagger.json"
-    with swagger_path.open(mode="w") as out_file:
+    with path.open(mode="w") as out_file:
         out_file.write(requests.get(swagger_uri).text)
 
 
-def read_swagger(package: Package) -> GUSPath:
+def read_swagger(package: Package, resource: Resource) -> GUSPath:
     # pylint: disable=unused-variable
-    swagger_json = __load_swagger_file(package=package)
+    swagger_json = __load_swagger_file(package=package, resource=resource)
 
     # create root GUSPath
     root = GUSPath(name="root", raw_path="/api/v1/")
@@ -69,11 +69,11 @@ def __walk_path_tree(swagger_json: dict[str, Any], root: GUSPath) -> GUSPath:
                 try:
                     if "get" in paths[temp_path].keys():
                         endpoint_properties = EndpointProperties(
-                            parameters=paths[temp_path]["get"]["parameters"],
-                            produces=paths[temp_path]["get"]["produces"],
-                            responses=paths[temp_path]["get"]["responses"],
-                            summary=paths[temp_path]["get"]["summary"],
-                            tags=paths[temp_path]["get"]["tags"],
+                            parameters=paths[temp_path]["get"].get("parameters", None),
+                            produces=paths[temp_path]["get"].get("produces", None),
+                            responses=paths[temp_path]["get"].get("responses", None),
+                            summary=paths[temp_path]["get"].get("summary", None),
+                            tags=paths[temp_path]["get"].get("tags", None),
                         )
                         new_path.register_endpoint(
                             GUSEndpoint(
@@ -83,8 +83,8 @@ def __walk_path_tree(swagger_json: dict[str, Any], root: GUSPath) -> GUSPath:
                                 properties=endpoint_properties,
                             )
                         )
-                except KeyError:
-                    pass
+                except KeyError as key_exc:
+                    logger.warning("Exception in constructing GUSEndpoint\n%s", key_exc)
 
                 result = parent_path.register_subpath(new_path)
                 if not result or parent_path.name == "root":
