@@ -1,5 +1,4 @@
 import logging
-from pprint import pprint
 
 import pytest
 from assertpy import assert_that, soft_assertions
@@ -42,8 +41,6 @@ class TestSwaggerParser:
     def test_read_swagger_paths(self, download_test_swagger):
         # pylint: disable=unused-argument, no-self-use
         root_path = read_swagger(package=config, resource=self.test_swagger_file)
-        pprint(root_path.sub_paths)
-
         with soft_assertions():
             sub_paths = root_path.sub_paths
             endpoints = root_path.endpoints

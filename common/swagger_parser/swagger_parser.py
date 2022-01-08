@@ -21,6 +21,7 @@ class ParsedSwagger(NamedTuple):
 
 
 def download_swagger(path: Path = swagger_path) -> None:
+
     logger.info("Downloading swagger file to path: %s", path)
     swagger_uri = "http://bdl.stat.gov.pl/api/v1/swagger/doc/swagger.json"
     with path.open(mode="w") as out_file:
