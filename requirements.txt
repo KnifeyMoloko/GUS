@@ -4,7 +4,7 @@ atomicwrites==1.4.0
 attrs==21.4.0
 backports.entry-points-selectable==1.1.1
 black==21.10b0
-certifi==2021.10.8
+certifi==2022.12.7
 cfgv==3.3.1
 chardet==4.0.0
 charset-normalizer==2.0.10
